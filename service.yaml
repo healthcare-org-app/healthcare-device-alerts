@@ -1,0 +1,14 @@
+name: device-alerts-service
+port: 8902
+lang: python
+description: "device-alerts-service \u2014 domain: devices"
+http_deps:
+- device-registry-service
+- notifications-service
+- care-teams-service
+- audit-log-service
+publishes:
+- device.alert.triggered
+- audit.event
+subscribes:
+- device.reading
