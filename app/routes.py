@@ -70,6 +70,15 @@ def build_blueprint(svc) -> Blueprint:
     def create_record():
         payload = request.get_json(silent=True) or {}
         payload.pop("id", None)
+        if payload.get('device_id'):
+            _peer = clients.get('device-registry-service')
+            if _peer:
+                try:
+                    payload['device_snapshot'] = json_or_raise(
+                        _peer.get(f"/api/device_registry/" + str(payload['device_id']))
+                    )
+                except ServiceUnavailable as _e:
+                    payload['device_warn'] = str(_e)
         row = db.query_one(
             f"INSERT INTO {TABLE} (data) VALUES (%s) RETURNING *",
             (Json(payload),),
